@@ -1,0 +1,77 @@
+﻿@model IEnumerable<WebApplication1.Models.Student>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Student List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Student" asp-action="Create" class="btn btn-primary">Create New Student</a>
+        </div>
+    </div>
+    <br /><br />
+    <input placeholder="Search here" id="search" class="form-control w-100" style="padding-left: 30px;">
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Course</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td width="10%">@obj.Id</td>
+                    <td width="20%">@obj.Firstname</td>
+                    <td width="20%">@obj.Lastname</td>
+                    <td width="10%">@obj.Course</td>
+                    <td width="20%">@obj.Email</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-sm btn-warning">Edit</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr id="noResults" style="display: none;">
+                <td colspan="6" class="text-start">No search results found</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#search').on('keyup', function () {
+            var searchValue = $(this).val().toLowerCase();
+            var rows = $('table tbody tr').not('#noResults');
+            var visibleRows = 0;
+
+            rows.each(function () {
+                var rowText = $(this).find('td:nth-child(2)').text().toLowerCase();
+                if (rowText.indexOf(searchValue) > -1) {
+                    $(this).show();
+                    visibleRows++;
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            if (visibleRows === 0) {
+                $('#noResults').show();
+            } else {
+                $('#noResults').hide();
+            }
+        });
+    });
+</script>

@@ -1,0 +1,121 @@
+﻿@model IEnumerable<WebApplication1.Models.Reservation>
+@{
+    ViewData["Title"] = "ResUI";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<div class="mt-2">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Reservation List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Reservation" asp-action="Add" class="btn btn-primary">Create Reservation</a>
+        </div>
+    </div>
+</div>
+<hr>
+
+<div style="display: flex; justify-content: center; align-items: center; margin-top: 70px;">
+    <!-- Wrap input and SVG in a relative container -->
+    <div style="position: relative; width: 75%;">
+        <input placeholder="Search here" id="searchBox" class="form-control w-100" style="padding-left: 30px;">
+        
+        <!-- SVG icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray"
+             style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);"
+             viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+        </svg>
+    </div>
+</div>
+
+<div class="table-responsive" style="display: flex;justify-content: center; align-items: center; margin-top: 5px;">
+    <table class="table table-striped-columns text-center align-middle w-75">
+        <thead class=" table-light">
+            <tr class="table table-bordered table-striped">
+                <th class="table-primary">Organization</th>
+                <th class="table-primary">Activity Title</th>
+                <th class="table-primary">Date Needed</th>
+                <th class="table-primary">Time From</th>
+                <th class="table-primary">Time To</th>
+                <th class="table-primary">Participants</th>
+                <th class="table-primary">Date</th>
+                <th class="table-primary">Speaker</th>
+                <th class="table-primary">Purpose Objective</th>
+                <th class="table-primary">Equipment Facilities</th>
+                <th class="table-primary">Nature Of Activity</th>
+                <th class="table-primary">Source Of Funds</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td>@obj.Organization</td>
+                    <td>@obj.ActTitle</td>
+                    <td>@obj.DateNeeded</td>
+                    <td>@obj.TimeFrom</td>
+                    <td>@obj.TimeTo</td>
+                    <td>@obj.Participants</td>
+                    <td>@obj.Date</td>
+                    <td>@obj.Speaker</td>
+                    <td>@obj.PurposeObjective</td>
+                    <td>@obj.EquipmentFacilities</td>
+                    <td>@obj.NatureOfActivity</td>
+                    <td>@obj.SourceOfFunds</td>
+                </tr>
+                <tr id="noResults" style="display: none;">
+                    <td colspan="6" class="text-start">No search results found</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#searchBox').on('keyup', function () {
+            var searchValue = $(this).val().toLowerCase();
+            var rows = $('table tbody tr').not('#noResults');
+            var visibleRows = 0;
+
+            rows.each(function () {
+                var rowText = $(this).find('td:nth-child(2)').text().toLowerCase();
+                if (rowText.indexOf(searchValue) > -1) {
+                    $(this).show();
+                    visibleRows++;
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            if (visibleRows === 0) {
+                $('#noResults').show();
+            } else {
+                $('#noResults').hide();
+            }
+        });
+    });
+</script>
+
+<div class="pagination-wrapper" style="display: flex;justify-content: center; align-items: center; margin-top: 5px;">
+    @if (ViewBag.CurrentPage > 1)
+    {
+        <a href="@Url.Action("ResUI", new { page = ViewBag.CurrentPage - 1 })" class="btn btn-primary" style="margin-right: 5px">Prev</a>
+    }
+
+    <span>Page @ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+
+    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+    {
+        <a href="@Url.Action("ResUI", new { page = ViewBag.CurrentPage + 1 })" class="btn btn-primary" style="margin-left: 5px">Next</a>
+    }
+</div>
+
+
