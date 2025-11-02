@@ -63,6 +63,33 @@ namespace WebApplication1.Controllers
                 return View(model);
             }
 
+            // Validate file extension, content type, and size
+            var allowedExt = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
+            var allowedTypes = new[] { "application/pdf", "image/jpeg", "image/png" };
+            var ext = Path.GetExtension(registrationFile.FileName)?.ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || !allowedExt.Contains(ext))
+            {
+                ModelState.AddModelError("registrationFile", "Only PDF and image files (.pdf, .jpg, .jpeg, .png) are allowed.");
+                return View(model);
+            }
+
+            if (!allowedTypes.Contains(registrationFile.ContentType))
+            {
+                // Some browsers may provide different content types; allow common image types
+                if (!registrationFile.ContentType.StartsWith("image/"))
+                {
+                    ModelState.AddModelError("registrationFile", "Only PDF and image files (.pdf, .jpg, .jpeg, .png) are allowed.");
+                    return View(model);
+                }
+            }
+
+            const long maxFileSize = 5 * 1024 * 1024; // 5 MB
+            if (registrationFile.Length > maxFileSize)
+            {
+                ModelState.AddModelError("registrationFile", "File size must be 5 MB or less.");
+                return View(model);
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -71,7 +98,7 @@ namespace WebApplication1.Controllers
             // save file
             if (registrationFile != null && registrationFile.Length > 0)
             {
-                var uploads = Path.Combine(_env.WebRootPath, "uploads");
+                var uploads = Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads");
                 if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
 
                 var fileName = Guid.NewGuid() + Path.GetExtension(registrationFile.FileName);
@@ -81,8 +108,7 @@ namespace WebApplication1.Controllers
                     await registrationFile.CopyToAsync(fs);
 
                 model.RegistrationFilePath = "/uploads/" + fileName;
-                Console.WriteLine("Form submitted to Create action!");
-
+                _logger.LogInformation("Saved registration file at {Path}", model.RegistrationFilePath);
             }
 
             model.CreatedAt = DateTime.UtcNow;
@@ -119,7 +145,7 @@ namespace WebApplication1.Controllers
 
         // Admin list page
         [Microsoft.AspNetCore.Authorization.Authorize]
-        public IActionResult Admin()
+        public IActionResult Records()
         {
             var list = _context.LockerRequests.OrderByDescending(x => x.CreatedAt).ToList();
             return View(list);
@@ -140,7 +166,7 @@ namespace WebApplication1.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Admin));
+            return RedirectToAction(nameof(Records));
         }
 
         // Delete action
@@ -164,7 +190,7 @@ namespace WebApplication1.Controllers
             _context.LockerRequests.Remove(request);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Admin));
+            return RedirectToAction(nameof(Records));
         }
     }
 }

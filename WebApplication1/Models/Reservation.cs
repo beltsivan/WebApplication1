@@ -54,5 +54,12 @@ namespace WebApplication1.Models
         [Required]
         [Display(Name = "Source of Funds")]
         public string SourceOfFunds { get; set; }
+
+        // Approval status
+        [Display(Name = "Status")]
+        public string Status { get; set; } = "Pending";
+
+        public string Approver { get; set; }
+        public DateTime? ApprovalDate { get; set; }
     }
 }

@@ -34,12 +34,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="LockerRequests" asp-action="Create">Locker Request</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="GatePass" asp-action="Index">Gate Pass Form</a>
+                        </li>
                     </ul>
                     <ul class="navbar-nav">
                         @if (User?.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="LockerRequests" asp-action="Admin">Admin Panel</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Records">Admin Panel</a>
                             </li>
                             <li class="nav-item">
                                 <span class="nav-link text-dark">Welcome, @User.Identity.Name!</span>

@@ -1,0 +1,129 @@
+﻿@model WebApplication1.Models.GatePassModel
+@{
+    ViewData["Title"] = "Create Gatepass";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Create Gatepass</h2>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form id="gatepassForm" asp-action="Create" method="post" enctype="multipart/form-data">
+                <!-- Student Information -->
+                <div class="form-group mb-3">
+                    <label asp-for="StudentIdNo" class="form-label"></label>
+                    <input asp-for="StudentIdNo" class="form-control" />
+                    <span asp-validation-for="StudentIdNo" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="StudentName" class="form-label"></label>
+                    <input asp-for="StudentName" class="form-control" />
+                    <span asp-validation-for="StudentName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="StudentCourse" class="form-label"></label>
+                    <input asp-for="StudentCourse" class="form-control" />
+                    <span asp-validation-for="StudentCourse" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="StudentYear" class="form-label"></label>
+                    <input asp-for="StudentYear" class="form-control" />
+                    <span asp-validation-for="StudentYear" class="text-danger"></span>
+                </div>
+
+                <!-- Vehicle Information -->
+                <div class="form-group mb-3">
+                    <label asp-for="VehiclePlateNo" class="form-label"></label>
+                    <input asp-for="VehiclePlateNo" class="form-control" />
+                    <span asp-validation-for="VehiclePlateNo" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="VehicleModel" class="form-label"></label>
+                    <input asp-for="VehicleModel" class="form-control" />
+                    <span asp-validation-for="VehicleModel" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="VehicleMake" class="form-label"></label>
+                    <input asp-for="VehicleMake" class="form-control" />
+                    <span asp-validation-for="VehicleMake" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="VehicleType" class="form-label"></label>
+                    <input asp-for="VehicleType" class="form-control" />
+                    <span asp-validation-for="VehicleType" class="text-danger"></span>
+                </div>
+
+                <!-- File Uploads -->
+                <div class="form-group mb-3">
+                    <label asp-for="OrDocumentPath" class="form-label"></label>
+                    <input asp-for="OrDocumentPath" type="file" class="form-control" />
+                    <span asp-validation-for="OrDocumentPath" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="CrDocumentPath" class="form-label"></label>
+                    <input asp-for="CrDocumentPath" type="file" class="form-control" />
+                    <span asp-validation-for="CrDocumentPath" class="text-danger"></span>
+                </div>
+
+                <!-- Submit -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Create Gatepass</button>
+                    <a asp-controller="GatePass" asp-action="List" class="btn btn-primary">View Gatepass List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('gatepassForm');
+            const orInput = document.getElementById('OrDocumentPath');
+            const crInput = document.getElementById('CrDocumentPath');
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            form.addEventListener('submit', function(e) {
+                // Check if both files are uploaded
+                if (!orInput.files.length || !crInput.files.length) {
+                    e.preventDefault();
+                    alert('Please upload both OR and CR documents before submitting.');
+                    return false;
+                }
+
+                // Disable button to prevent double submission
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
+            });
+
+            // Add visual feedback when file selected
+            [orInput, crInput].forEach(input => {
+                input.addEventListener('change', function() {
+                    const fileName = this.files[0]?.name;
+                    if (fileName) {
+                        this.classList.add('is-valid');
+                        this.classList.remove('is-invalid');
+                    } else {
+                        this.classList.add('is-invalid');
+                        this.classList.remove('is-valid');
+                    }
+                });
+            });
+        });
+    </script>
+}

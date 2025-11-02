@@ -43,7 +43,7 @@ namespace WebApplication1.Controllers
                         return Redirect(returnUrl);
                     }
 
-                    return RedirectToAction("Admin", "LockerRequests");
+                    return RedirectToAction("Records", "LockerRequests");
                 }
 
                 ModelState.AddModelError(string.Empty, "Invalid login attempt");
